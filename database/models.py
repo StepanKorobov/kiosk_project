@@ -59,6 +59,7 @@ def create_or_get_user(db: Session, telegram_id: int, username: str = None):
 def get_all_kiosks(db: Session):
     with get_session() as session:
         result = session.query(Kiosk).all()
+        print(result, "AAAAAAAAAAAAAAAA")
         return result
 
 

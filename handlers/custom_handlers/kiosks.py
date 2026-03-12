@@ -8,6 +8,7 @@ from keyboards.inline.inline import kiosks_keyboard, assortment_keyboard
 def show_all_kiosks(call):
     with get_session() as db:
         kiosks = get_all_kiosks(db)
+        print(kiosks)
         bot.edit_message_text(
             "📋 Выбери ларек:",
             call.message.chat.id,
@@ -23,7 +24,7 @@ def show_assortment(call):
         products = get_kiosk_products(session, kiosk_id)
         text = f"🍔 Ассортимент ларька #{kiosk_id}:\n\n"
         for p in products:
-            text += f"• {p.product.name} - {p.price}₽ (осталось: {p.count})\n"
+            text += f"• {p.product.name} - {p.price}₽ (осталось: {p.count} кг)\n"
 
         bot.edit_message_text(
             text,

@@ -181,10 +181,23 @@ class Kiosk(Base):
     address = Column(String(200), nullable=False)
     lat = Column(Float)
     lon = Column(Float)
-    user_id = Column(Integer, ForeignKey('users.id'))  # ✅ ПРАВИЛЬНЫЙ ForeignKey
+    user_id = Column(Integer, ForeignKey('users.id'))
+    # work_from = Column(DateTime, default=datetime.now)
+    # work_util = Column(DateTime, default=datetime.now)
 
     # owner = relationship("User", back_populates="kiosks")
     kiosk_products = relationship("KioskProduct", back_populates="kiosk")
+
+    def to_json(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+
+class Categories(Base):
+    __tablename__ = 'categories'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
+
+    products = relationship("Product", back_populates="category")
 
     def to_json(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -195,6 +208,9 @@ class Product(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     units_meas = Column(String(20), default="шт")
+    category_id = Column(Integer, ForeignKey('categories.id'))
+
+    category = relationship("Categories", back_populates="products")
 
     def to_json(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

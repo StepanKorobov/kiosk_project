@@ -52,6 +52,7 @@ def order_status_keyboard(order_id: int):
     kb = InlineKeyboardMarkup()
     kb.row(InlineKeyboardButton("🔄 Обновить статус", callback_data=f"status_{order_id}"))
     kb.row(InlineKeyboardButton("📋 История заказов", callback_data="history"))
+    kb.row(InlineKeyboardButton("🔙 Главное меню", callback_data="main_menu"))
     return kb
 
 
