@@ -1,7 +1,7 @@
 from loader import bot
 from database.models import get_user_cart, add_to_cart, get_user_cart_with_kiosk, delete_user_catt_with_kiosk, \
     get_session
-from keyboards.inline.inline import cart_keyboard, payment_keyboard, main_menu
+from keyboards.inline.inline import cart_keyboard, payment_keyboard, main_menu, back_menu_keyboard
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("clear_cart_"))
@@ -24,7 +24,7 @@ def show_cart_kiosk(call):
     with get_session() as db:
         cart_items = get_user_cart_with_kiosk(db, call.from_user.id, kiosk_id)
         if not cart_items:
-            bot.edit_message_text("🛒 Корзина пуста", call.message.chat.id, call.message.message_id)
+            bot.edit_message_text("🛒 Корзина пуста", call.message.chat.id, call.message.message_id, reply_markup=back_menu_keyboard())
             return
 
         text = "🛒 Корзина:\n\n"
@@ -43,7 +43,7 @@ def show_cart(call):
     with get_session() as db:
         cart_items = get_user_cart(db, call.from_user.id)
         if not cart_items:
-            bot.edit_message_text("🛒 Корзина пуста", call.message.chat.id, call.message.message_id)
+            bot.edit_message_text("🛒 Корзина пуста", call.message.chat.id, call.message.message_id, reply_markup=back_menu_keyboard())
             return
 
         text = "🛒 Корзина:\n\n"

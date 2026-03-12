@@ -1,6 +1,6 @@
 from loader import bot
 from database.models import get_user_orders, create_order_from_cart, get_session
-from keyboards.inline.inline import payment_keyboard, order_status_keyboard
+from keyboards.inline.inline import payment_keyboard, order_status_keyboard, back_menu_keyboard
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "checkout")
@@ -36,7 +36,7 @@ def show_history(call):
     with get_session() as db:
         orders = get_user_orders(db, call.from_user.id)
         if not orders:
-            bot.edit_message_text("📋 История заказов пуста", call.message.chat.id, call.message.message_id)
+            bot.edit_message_text("📋 История заказов пуста", call.message.chat.id, call.message.message_id, reply_markup=back_menu_keyboard())
             return
 
         text = "📋 Последние заказы:\n\n"
@@ -46,4 +46,4 @@ def show_history(call):
             }
             text += f"{status_emojis.get(order.status.value, '➤')} Заказ #{order.id} - {order.status.name.title()}\n"
 
-        bot.edit_message_text(text, call.message.chat.id, call.message.message_id)
+        bot.edit_message_text(text, call.message.chat.id, call.message.message_id, reply_markup=back_menu_keyboard())

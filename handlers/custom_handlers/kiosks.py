@@ -38,4 +38,5 @@ def show_assortment(call):
 def handle_location(call):
     kb = InlineKeyboardMarkup()
     kb.row(InlineKeyboardButton("🏪 ул. Ленина 10 (ближайший)", callback_data="kiosk_1"))
+    kb.row(InlineKeyboardButton("🔙 Главное меню", callback_data="main_menu"))
     bot.edit_message_text("📍 Ближайший ларек найден:", call.message.chat.id, call.message.message_id, reply_markup=kb)
