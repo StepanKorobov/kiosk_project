@@ -1,5 +1,6 @@
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
+
 def main_menu():
     kb = InlineKeyboardMarkup(row_width=2)
     kb.add(
@@ -10,6 +11,7 @@ def main_menu():
     kb.row(InlineKeyboardButton("📋 История", callback_data="history"))
     return kb
 
+
 def kiosks_keyboard(kiosks):
     kb = InlineKeyboardMarkup()
     for kiosk in kiosks:
@@ -17,22 +19,26 @@ def kiosks_keyboard(kiosks):
     kb.row(InlineKeyboardButton("🔙 Главное меню", callback_data="main_menu"))
     return kb
 
-def assortment_keyboard(products):
+
+def assortment_keyboard(products, kiosk_id):
     kb = InlineKeyboardMarkup()
     for product in products:
         kb.row(InlineKeyboardButton(
             f"➕ {product.product.name} ({product.count}) {product.price}₽",
             callback_data=f"add_{product.id}"
         ))
-    kb.row(InlineKeyboardButton("🛒 Корзина", callback_data="cart"))
+    kb.row(InlineKeyboardButton("🛒 Корзина", callback_data=f"cart_{kiosk_id}"))
     kb.row(InlineKeyboardButton("🔙 Ларьки", callback_data="all_kiosks"))
     return kb
 
-def cart_keyboard():
+
+def cart_keyboard(kiosk_id=0):
     kb = InlineKeyboardMarkup()
     kb.row(InlineKeyboardButton("✅ Оформить заказ", callback_data="checkout"))
+    kb.row(InlineKeyboardButton("🧹 Очистить корзину", callback_data=f"clear_cart_{kiosk_id}"))
     kb.row(InlineKeyboardButton("🔙 Главное меню", callback_data="main_menu"))
     return kb
+
 
 def payment_keyboard():
     kb = InlineKeyboardMarkup()
@@ -40,6 +46,7 @@ def payment_keyboard():
     kb.row(InlineKeyboardButton("💰 Оплатить в ларьке", callback_data="pay_later"))
     kb.row(InlineKeyboardButton("🔙 Корзина", callback_data="cart"))
     return kb
+
 
 def order_status_keyboard(order_id: int):
     kb = InlineKeyboardMarkup()

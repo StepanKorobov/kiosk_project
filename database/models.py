@@ -89,6 +89,53 @@ def get_user_cart(db: Session, user_id: int):
         return cart_items
 
 
+def get_user_cart_with_kiosk(db: Session, user_id: int, kiosk_id: int):
+    # with get_session() as session:
+    #     result = session.query(CartItem).filter(
+    #         CartItem.user_id == user_id
+    #     ).options(
+    #         joinedload(CartItem.kiosk_product).joinedload(KioskProduct.product)
+    #     ).all()
+    #     return result
+    with get_session() as session:
+        cart_items = (session.query(CartItem)
+                      .join(KioskProduct, CartItem.kiosk_product_id == KioskProduct.id)
+                      .filter(
+            CartItem.user_id == user_id,
+            KioskProduct.kiosk_id == kiosk_id  # Твой фильтр
+        ).all())
+
+        # Подгружаем связанные объекты (опционально, если нужны)
+        for item in cart_items:
+            item.kiosk_product = session.query(KioskProduct).get(item.kiosk_product_id)
+            if item.kiosk_product:
+                item.kiosk_product.product = session.query(Product).get(item.kiosk_product.product_id)
+
+        return cart_items
+
+
+def delete_user_catt_with_kiosk(db: Session, user_id: int, kiosk_id: int):
+    with get_session() as session:
+        # 1. Получаем ID корзинных товаров для киоска (JOIN работает)
+        cart_item_ids = (session.query(CartItem.id)
+                         .join(KioskProduct, CartItem.kiosk_product_id == KioskProduct.id)
+                         .filter(
+            CartItem.user_id == user_id,
+            KioskProduct.kiosk_id == kiosk_id
+        )
+                         .all())
+
+        ids_to_delete = [item_id[0] for item_id in cart_item_ids]  # Извлекаем ID
+
+        # 2. Удаляем по ID (без JOIN)
+        deleted_count = (session.query(CartItem)
+                         .filter(CartItem.id.in_(ids_to_delete))
+                         .delete())
+
+        session.commit()
+        return deleted_count
+
+
 def add_to_cart(db: Session, user_id: int, kiosk_product_id: int):
     with get_session() as session:
         cart_item = session.query(CartItem).filter(

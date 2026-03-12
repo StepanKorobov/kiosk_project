@@ -29,7 +29,7 @@ def show_assortment(call):
             text,
             call.message.chat.id,
             call.message.message_id,
-            reply_markup=assortment_keyboard(products)
+            reply_markup=assortment_keyboard(products, kiosk_id)
         )
 
 
