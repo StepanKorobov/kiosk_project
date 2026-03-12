@@ -1,5 +1,5 @@
 from database.database import Base, get_session, User, Kiosk, KioskProduct, CartItem, Order, OrderItem, \
-    OrderStatus, Product
+    OrderStatus, Product, Categories
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import and_
 from datetime import datetime
@@ -59,7 +59,12 @@ def create_or_get_user(db: Session, telegram_id: int, username: str = None):
 def get_all_kiosks(db: Session):
     with get_session() as session:
         result = session.query(Kiosk).all()
-        print(result, "AAAAAAAAAAAAAAAA")
+        return result
+
+
+def get_kiosk_category(db: Session, kiosk_id: int):
+    with get_session() as session:
+        result = session.query(Categories).all()
         return result
 
 
@@ -67,6 +72,15 @@ def get_kiosk_products(db: Session, kiosk_id: int):
     with get_session() as session:
         result = session.query(KioskProduct).filter(
             KioskProduct.kiosk_id == kiosk_id
+        ).options(joinedload(KioskProduct.product)).all()
+        return result
+
+
+def get_kiosk_products_category(db: Session, kiosk_id: int, category_id: int):
+    with get_session() as session:
+        result = session.query(KioskProduct).filter(
+            KioskProduct.kiosk_id == kiosk_id,
+            KioskProduct.product.has(Product.category_id == category_id)
         ).options(joinedload(KioskProduct.product)).all()
         return result
 

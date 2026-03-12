@@ -20,6 +20,20 @@ def kiosks_keyboard(kiosks):
     return kb
 
 
+def category_keyboard(category, kiosk_id):
+    kb = InlineKeyboardMarkup()
+    for i_category in category:
+        kb.row(InlineKeyboardButton(
+            f"{i_category.name}",
+            callback_data=f"kiosks_{kiosk_id}_{i_category.id}"
+        ))
+    kb.row(InlineKeyboardButton("🏪 Ларьки", callback_data="all_kiosks"),
+           InlineKeyboardButton("🛒 Корзина", callback_data=f"cart_{kiosk_id}"))
+    # kb.row(InlineKeyboardButton("🛒 Корзина", callback_data=f"cart_{kiosk_id}"))
+    kb.row(InlineKeyboardButton("🔙 Главное меню", callback_data="main_menu"))
+    return kb
+
+
 def assortment_keyboard(products, kiosk_id):
     kb = InlineKeyboardMarkup()
     for product in products:
@@ -27,14 +41,17 @@ def assortment_keyboard(products, kiosk_id):
             f"➕ {product.product.name} ({product.count}) {product.price}₽",
             callback_data=f"add_{product.id}"
         ))
-    kb.row(InlineKeyboardButton("🛒 Корзина", callback_data=f"cart_{kiosk_id}"))
-    kb.row(InlineKeyboardButton("🔙 Ларьки", callback_data="all_kiosks"))
+    kb.row(InlineKeyboardButton("🛒 Корзина", callback_data=f"cart_{kiosk_id}"),
+           InlineKeyboardButton("📂 Категории", callback_data=f"kiosk_{kiosk_id}"))
+    kb.row(InlineKeyboardButton("🏪 Ларьки", callback_data="all_kiosks"),
+           InlineKeyboardButton("🔙 Главное меню", callback_data="main_menu"))
     return kb
 
 
 def cart_keyboard(kiosk_id=0):
     kb = InlineKeyboardMarkup()
     kb.row(InlineKeyboardButton("✅ Оформить заказ", callback_data="checkout"))
+    kb.row(InlineKeyboardButton("📂 Категории", callback_data=f"kiosk_{kiosk_id}"))
     kb.row(InlineKeyboardButton("🧹 Очистить корзину", callback_data=f"clear_cart_{kiosk_id}"))
     kb.row(InlineKeyboardButton("🔙 Главное меню", callback_data="main_menu"))
     return kb

@@ -1,14 +1,14 @@
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from loader import bot
-from database.models import get_all_kiosks, get_kiosk_products, get_session
-from keyboards.inline.inline import kiosks_keyboard, assortment_keyboard
+from database.models import get_all_kiosks, get_kiosk_products, get_kiosk_products_category, get_kiosk_category, \
+    get_session
+from keyboards.inline.inline import kiosks_keyboard, assortment_keyboard, category_keyboard
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "all_kiosks")
 def show_all_kiosks(call):
     with get_session() as db:
         kiosks = get_all_kiosks(db)
-        print(kiosks)
         bot.edit_message_text(
             "📋 Выбери ларек:",
             call.message.chat.id,
@@ -18,11 +18,28 @@ def show_all_kiosks(call):
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('kiosk_'))
-def show_assortment(call):
+def show_category(call):
     kiosk_id = int(call.data.split('_')[1])
     with get_session() as session:
-        products = get_kiosk_products(session, kiosk_id)
+        category = get_kiosk_category(session, kiosk_id)
+        text = "🍔 Категории товара#:\n\n"
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            reply_markup=category_keyboard(category, kiosk_id)
+        )
+
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith('kiosks_'))
+def show_assortment(call):
+    kiosk_id = int(call.data.split('_')[1])
+    category_id = int(call.data.split('_')[2])
+    with get_session() as session:
+        products = get_kiosk_products_category(session, kiosk_id, category_id)
         text = f"🍔 Ассортимент ларька #{kiosk_id}:\n\n"
+        if not products:
+            text = "".join((text, "К сожалению в данной категории товара ещё нет ассортимента.\n\n"))
         for p in products:
             text += f"• {p.product.name} - {p.price}₽ (осталось: {p.count} кг)\n"
 
