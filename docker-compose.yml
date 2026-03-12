@@ -1,0 +1,21 @@
+services:
+  telegram-bot-kiosk:
+    build: .
+    volumes:
+      - ./database.db:/app/database.db
+    #      - ./log/debug.log:/app/log/debug.log
+    container_name: telegram-bot-kiosk
+    restart: unless-stopped
+    ports:
+      - "80:2222"
+    env_file:
+      - .env
+    deploy:
+      resources:
+        limits: # жёсткие лимиты
+          cpus: '0.2'      # 2 ядра CPU
+          memory: 256M       # 4 ГБ RAM
+        reservations: # мягкие параметры
+          cpus: '0.1'      # Минимум 1 ядро
+          memory: 128M       # Минимум 2 ГБ
+    cpuset: "12"  # Ядра 14 и 15
