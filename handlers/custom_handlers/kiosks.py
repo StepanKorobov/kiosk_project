@@ -41,7 +41,7 @@ def show_assortment(call):
         if not products:
             text = "".join((text, "К сожалению в данной категории товара ещё нет ассортимента.\n\n"))
         for p in products:
-            text += f"• {p.product.name} - {p.price}₽ (осталось: {p.count} кг)\n"
+            text += f"• {p.product.name} - {p.price}₽ (осталось: {p.count} {p.product.units_meas})\n"
 
         bot.edit_message_text(
             text,
