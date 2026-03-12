@@ -13,9 +13,9 @@ services:
     deploy:
       resources:
         limits: # жёсткие лимиты
-          cpus: '0.9'      # 2 ядра CPU
-          memory: 256M       # 4 ГБ RAM
+          cpus: '1'      # 2 ядра CPU
+          memory: 512M       # 4 ГБ RAM
         reservations: # мягкие параметры
           cpus: '0.5'      # Минимум 1 ядро
-          memory: 128M       # Минимум 2 ГБ
+          memory: 256M       # Минимум 2 ГБ
     cpuset: "12"  # Ядра 14 и 15
